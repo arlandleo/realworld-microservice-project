@@ -17,7 +17,7 @@ pipeline {
         // Checkout To The Service Branch
         stage('Checkout To Mcroservice Branch'){
             steps{
-                git branch: 'app-ad-serverice', url: 'https://github.com/awanmbandi/realworld-microservice-project.git'
+                git branch: 'app-ad-serverice', url: 'https://github.com/arlandleo/realworld-microservice-project.git'
             }
         }
         // // SonarQube SAST Code Analysis
@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker build -t awanmbandi/adservice:latest ."
+                        sh "docker build -t arland99/adservice:latest ."
                     }
                 }
             }
@@ -63,7 +63,7 @@ pipeline {
         // Execute SCA/Dependency Test on Service Docker Image
         stage('Snyk SCA Test | Dependencies') {
             steps {
-                sh "${SNYK_HOME}/snyk-linux test --docker awanmbandi/adservice:latest || true" 
+                sh "${SNYK_HOME}/snyk-linux test --docker arland99/adservice:latest || true" 
             }
         }
         // Push Service Image to DockerHub
@@ -71,7 +71,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker push awanmbandi/adservice:latest "
+                        sh "docker push arland99/adservice:latest "
                     }
                 }
             }
@@ -110,7 +110,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#ma-multi-microservices-alerts', //update and provide your channel name
+        slackSend channel: '#ntal--multi-microservices-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
