@@ -55,7 +55,7 @@ pipeline {
         // Execute SCA/Dependency Test on Service Docker Image
         stage('Snyk SCA Test | Dependencies') {
             steps {
-                sh "${SNYK_HOME}/snyk-linux test --docker awanmbandi/shippingservice:latest || true" 
+                sh "${SNYK_HOME}/snyk-linux test --docker arland99/shippingservice:latest || true" 
             }
         }
         // Push Service Image to DockerHub
