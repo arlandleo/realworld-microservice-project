@@ -16,7 +16,7 @@ pipeline {
         // Checkout To The Service Branch
         stage('Checkout To Mcroservice Branch'){
             steps{
-                git branch: 'app-frontend-service', url: 'https://github.com/awanmbandi/realworld-microservice-project.git'
+                git branch: 'app-frontend-service', url: 'https://github.com/arlandleo/realworld-microservice-project.git'
             }
         }
         // SonarQube SAST Code Analysis
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker build -t awanmbandi/frontendservice:latest ."
+                        sh "docker build -t arland99/frontendservice:latest ."
                     }
                 }
             }
@@ -55,7 +55,7 @@ pipeline {
         // Execute SCA/Dependency Test on Service Docker Image
         stage('Snyk SCA Test | Dependencies') {
             steps {
-                sh "${SNYK_HOME}/snyk-linux test --docker awanmbandi/frontendservice:latest || true" 
+                sh "${SNYK_HOME}/snyk-linux test --docker arland99/frontendservice:latest || true" 
             }
         }
         // Push Service Image to DockerHub
@@ -63,7 +63,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker push awanmbandi/frontendservice:latest "
+                        sh "docker push arland99/frontendservice:latest "
                     }
                 }
             }
@@ -80,15 +80,15 @@ pipeline {
         //         }
         //     }
         // }
-        // // Perform DAST Test on Application
-        // stage('ZAP Dynamic Testing | DAST') {
-        //     steps {
-        //         sshagent(['OWASP-Zap-Credential']) {
-        //             sh 'ssh -o StrictHostKeyChecking=no ubuntu@34.71.9.167 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://34.45.175.156:30000/" || true'
-        //                                                 //JENKINS_PUBLIC_IP                                                   //EKS_WORKER_NODE_IP_ADDRESS:30000
-        //         }
-        //     }
-        // }
+        // Perform DAST Test on Application
+        stage('ZAP Dynamic Testing | DAST') {
+            steps {
+                sshagent(['OWASP-Zap-Credential']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@18.227.79.82 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://18.118.133.78:30000/" || true'
+                                                        //JENKINS_PUBLIC_IP                                                   //EKS_WORKER_NODE_IP_ADDRESS:30000
+                }
+            }
+        }
         // // Production Deployment Approval
         // stage('Approve Prod Deployment') {
         //     steps {
@@ -111,7 +111,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#ma-multi-microservices-alerts', //update and provide your channel name
+        slackSend channel: '#ntal--multi-microservices-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
