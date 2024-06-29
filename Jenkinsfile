@@ -63,7 +63,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Credential', toolName: 'docker') {
-                        sh "docker push awanmbandi/shippingservice:latest "
+                        sh "docker push arland99/shippingservice:latest "
                     }
                 }
             }
